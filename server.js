@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors(
   {
-    origin: "http://localhost:5173",
+    origin: "https://67784306b0b7744f0982058c--aquamarine-biscuit-6eb6a5.netlify.app/",
     credentials: true,
   }
 ));

@@ -8,7 +8,11 @@ export const createUser = async (req, res, next) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({
+        message: "User already exists with this email",
+        success: "false",
+                   
+      });
     }
 
     // Hash the password before saving it to the database

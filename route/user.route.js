@@ -9,6 +9,7 @@ import {
   addExpense,
   deleteExpense,
   getExpenses,
+  getExpensesByDateRange,
   updateExpense,
 } from "../controller/expense.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
@@ -27,5 +28,6 @@ Router.route("/")
   .post(addExpense) // Add an expense
   .delete(deleteExpense); // Delete an expense
   Router.route("/user/logout").post(logoutUser); 
+  Router.route("/getByDate").post(getExpensesByDateRange);
 
 export default Router;

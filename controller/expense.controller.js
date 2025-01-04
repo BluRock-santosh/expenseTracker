@@ -2,7 +2,7 @@ import User from "../model/user.model.js";
 
 export const addExpense = async (req, res, next) => {
   try {
-    const {name, amount, description, category } = req.body;
+    const { name, amount, description, category } = req.body;
 
     const newExpense = {
       name,
@@ -21,7 +21,6 @@ export const addExpense = async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: "Expense added successfully",
-
     });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -39,6 +38,7 @@ export const getExpenses = async (req, res, next) => {
       expenses: user.expenses,
       totalExpenses: user.getTotalExpenses(),
       success: true,
+      message: "Expenses retrieved successfully",
     });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -83,9 +83,8 @@ export const updateExpense = async (req, res, next) => {
     res.status(400).json({ message: err.message });
   }
 };
-
 export const getExpensesByDateRange = async (req, res) => {
-  const { startDate, endDate } = req.query;
+  const { startDate, endDate } = req.body;
 
   if (!startDate || !endDate) {
     return res
@@ -94,22 +93,39 @@ export const getExpensesByDateRange = async (req, res) => {
   }
 
   try {
-    const expenses = await User.findById(req.user._id);
+    // Fetch the user by their ID
+    const user = await User.findById(req.user._id);
 
-    // Use the method to get filtered expenses
-    const filteredExpenses = expenses.getExpensesByDateRange(
-      startDate,
-      endDate
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Filter expenses by date range
+    const filteredExpenses = user.expenses.filter((expense) => {
+      const expenseDate = new Date(expense.date);
+      return (
+        expenseDate >= new Date(startDate) && expenseDate <= new Date(endDate)
+      );
+    });
+
+    // Calculate total expenses using the filtered list
+    const totalExpenses = filteredExpenses.reduce(
+      (total, expense) => total + expense.amount,
+      0
     );
 
-    const totalExpenses = expenses.totalExpenses();
+    // Respond with filtered expenses and total
     return res.json({
       expenses: filteredExpenses,
       totalExpenses,
+      success: true,
+      message: "Expenses retrieved successfully",
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error retrieving expenses", error });
+    console.error("Error retrieving expenses:", error);
+    return res.status(500).json({
+      message: "Error retrieving expenses",
+      error: error.message,
+    });
   }
 };

@@ -54,9 +54,15 @@ export const deleteExpense = async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    await user.removeExpense(expenseId);
+  //  
+  const expense =user.expenses.filter(expense => expense.expenseId !== expenseId);
+  await user.save();
 
-    res.status(200).json({ message: "Expense deleted successfully" });
+    res.status(200).json({
+      success: true,
+      message: "Expense deleted successfully",
+      expenses: expense,
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

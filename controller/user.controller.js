@@ -68,7 +68,7 @@ export const loginUser = async (req, res, next) => {
     const cookieOption = {
       secure: true,
       httpOnly: true,
-      sameSite: "Lax",
+      sameSite: "None",
       path: "/",
     };
 
